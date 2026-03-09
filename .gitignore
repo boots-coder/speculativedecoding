@@ -1,0 +1,14 @@
+### Model weights (do not commit large binaries)
+*.bin
+*.pt
+*.ckpt
+*.safetensors
+*.onnx
+
+### Local datasets
+calibration/
+
+### Python cache
+__pycache__/
+*.pyc
+

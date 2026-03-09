@@ -1,0 +1,20 @@
+merge_method: passthrough
+base_model: Qwen/Qwen3-8B
+dtype: bfloat16
+tokenizer_source: base
+
+# 这里利用 passthrough + slices 来“深度剪枝”：
+# - 保留前 0-20 层
+# - 丢弃中间层
+# - 保留最后几层（以 Qwen3-8B 当前标准层数 32 为例，保留 28-31 层）
+# 如果后续官方确认层数不同，可以按实际层数修改 layer_range。
+slices:
+  # 前 0-18 层
+  - sources:
+      - model: Qwen/Qwen3-8B
+        layer_range: [0, 18]
+
+  # 最后几层：28-36
+  - sources:
+      - model: Qwen/Qwen3-8B
+        layer_range: [28, 36]
