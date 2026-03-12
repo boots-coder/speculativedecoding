@@ -1,27 +1,33 @@
+
+flash_attn: sdpa
 # === 模型与数据 ===
 stage: sft
 do_train: true
 model_name_or_path: /home/haoxuan/Desktop/SpeculativeDecoding/models/qwen3-4b-passthrough
-dataset: alpaca_zh,alpaca_en
+adapter_name_or_path: /home/haoxuan/Desktop/SpeculativeDecoding/models/pruned_qwen_recovered/checkpoint-18000
+
+# 【核心设定】使用 open_r1_math，并限制只抽 10000 条
+dataset: open_r1_math
 dataset_dir: ./data
+max_samples: 10000      # <--- 就是加了这一行
 template: qwen
 
 # === 剪枝恢复核心设定 ===
 finetuning_type: lora
 lora_target: all
-lora_rank: 128
+# lora_rank: 64 在原来的lora上更新, 实际没有变化
 
 # === 输出路径 ===
-output_dir: /home/haoxuan/Desktop/SpeculativeDecoding/models/pruned_qwen_recovered
+output_dir: /home/haoxuan/Desktop/SpeculativeDecoding/models/qwen3-4b-math-lora
 overwrite_cache: true
 overwrite_output_dir: true
 
 # === 训练超参数 ===
-cutoff_len: 2048
+cutoff_len: 2048              # 保持大截断长度，容纳长思维链
 preprocessing_num_workers: 16
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 16
-learning_rate: 1.0e-4
+learning_rate: 1.0e-5         # 学习率保持 1e-5，保护通用能力
 lr_scheduler_type: cosine
 warmup_steps: 100
 num_train_epochs: 3.0
@@ -35,8 +41,5 @@ save_steps: 500
 logging_steps: 10
 per_device_eval_batch_size: 1
 
-# === 断点续训 ===
-resume_from_checkpoint: /home/haoxuan/Desktop/SpeculativeDecoding/models/pruned_qwen_recovered/checkpoint-13000
-
 report_to: wandb
-run_name: qwen3-4b-pruned-recovery-run2  # 这个名字会显示在网页看板上，你可以随便起
+run_name: qwen3-4b-math-10k-tuning

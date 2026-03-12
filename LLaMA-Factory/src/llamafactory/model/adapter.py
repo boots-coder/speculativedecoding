@@ -249,7 +249,7 @@ def _setup_lora_tuning(
 
             finetuning_args.additional_target = module_names
             logger.warning_rank0("Vocab has been resized, add {} to trainable params.".format(",".join(module_names)))
-
+# todo: add the spcific lora target layers index "layers_to_transform": list(range(20, 33)),
         if finetuning_args.finetuning_type == "lora":
             peft_kwargs = {
                 "r": finetuning_args.lora_rank,
@@ -259,6 +259,7 @@ def _setup_lora_tuning(
                 "use_rslora": finetuning_args.use_rslora,
                 "use_dora": finetuning_args.use_dora,
                 "modules_to_save": finetuning_args.additional_target,
+                # "layers_to_transform": list(range(20, 33)),
             }
         elif finetuning_args.finetuning_type == "oft":
             peft_kwargs = {
@@ -296,7 +297,6 @@ def _setup_lora_tuning(
                 else:
                     logger.info_rank0(f"Using PiSSA initialization with FSVD steps {finetuning_args.pissa_iter}.")
                     peft_kwargs["init_lora_weights"] = f"pissa_niter_{finetuning_args.pissa_iter}"
-
             if finetuning_args.finetuning_type == "lora":
                 peft_config = LoraConfig(
                     task_type=TaskType.CAUSAL_LM,

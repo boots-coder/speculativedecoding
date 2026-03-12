@@ -1,4 +1,4 @@
-import os
+import sys
 from pathlib import Path
 from typing import List
 
@@ -8,6 +8,18 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 # 修改为你刚刚下载的具体路径
 MODEL_PATH = "/home/haoxuan/Desktop/SpeculativeDecoding/models/Qwen3-4B-Instruct-2507"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+# 与 test_lora_math 相同的数学评估题
+_root = Path(__file__).resolve().parent.parent
+_test_dir = _root / "test"
+if str(_root) not in sys.path:
+    sys.path.insert(0, str(_root))
+if str(_test_dir) not in sys.path:
+    sys.path.insert(0, str(_test_dir))
+from math_eval_data import MATH_EVAL_ITEMS, check_math_answer
+
+MATH_SYSTEM = "你是一个数学助手。请清晰写出推理与计算步骤，给出准确答案。"
+DEFAULT_SYSTEM = "你是一个乐于助人、逻辑清晰的AI助手。请用简明扼要的语言回答问题。"
 
 def get_questions() -> List[str]:
     # 保持一致的 10 个问题
@@ -42,11 +54,11 @@ def load_model_and_tokenizer():
 
 
 @torch.inference_mode()
-def generate_answer(model, tokenizer, question: str) -> str:
-    # 1. 构造官方推荐的 messages 格式
-   
+def generate_answer(model, tokenizer, question: str, system_prompt: str = None) -> str:
+    if system_prompt is None:
+        system_prompt = DEFAULT_SYSTEM
     messages = [
-      {"role": "system", "content": "你是一个乐于助人、逻辑清晰的AI助手。请用简明扼要的语言回答问题。"},
+      {"role": "system", "content": system_prompt},
       {"role": "user", "content": question}
   ]
 
@@ -88,15 +100,31 @@ def main() -> None:
 
     questions = get_questions()
     model, tokenizer = load_model_and_tokenizer()
-
     out_path = output_dir / "qwen3_4b_instruct_answers.txt"
 
     with out_path.open("w", encoding="utf-8") as fout:
+        # 1. 数学题评估（10 道，与 test_lora_math 相同）
+        fout.write("========== 数学题评估（10 道，计准确率）==========\n\n")
+        eval_results = []
+        for idx, (q, expected_list) in enumerate(MATH_EVAL_ITEMS, 1):
+            print(f"\n=== [数学评估] Q{idx}: {q}")
+            ans = generate_answer(model, tokenizer, q, system_prompt=MATH_SYSTEM)
+            ok = check_math_answer(ans, expected_list)
+            eval_results.append(ok)
+            print(f"[4B-Instruct] {ans[:200].replace(chr(10), ' ')}...")
+            fout.write(f"Q{idx}: {q}\nA: {ans}\n正确: {ok}\n\n")
+        correct, total = sum(eval_results), len(eval_results)
+        accuracy = correct / total if total else 0.0
+        eval_summary = f">>> 数学题评估准确率: {correct}/{total} = {accuracy:.1%}\n\n"
+        fout.write(eval_summary)
+        print(eval_summary.strip())
+
+        # 2. 常识题（原 10 题）
+        fout.write("========== 常识题 ==========\n\n")
         for idx, q in enumerate(questions, 1):
             print(f"\n=== Q{idx}: {q} ===")
             ans = generate_answer(model, tokenizer, q)
-            # 控制台预览前 200 个字
-            print(f"[4B-Instruct] {ans[:200].replace(chr(10), ' ')}...") 
+            print(f"[4B-Instruct] {ans[:200].replace(chr(10), ' ')}...")
             fout.write(f"Q{idx}: {q}\nA(4B-Instruct): {ans}\n\n{'-'*50}\n\n")
 
     print(f"\nDone. Instruct answers saved to: {out_path}")

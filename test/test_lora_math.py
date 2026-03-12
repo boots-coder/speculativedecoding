@@ -18,13 +18,16 @@ from peft import PeftModel
 
 from config.config import PRUNED_MODEL_PATH, DEVICE, HF_TOKEN
 
-LORA_CHECKPOINT_PATH = "/home/haoxuan/Desktop/SpeculativeDecoding/models/pruned_qwen_recovered/checkpoint-18000"
+# 数学 LoRA：qwen3-4b-math-lora（底座为 qwen3-4b-passthrough）
+LORA_MATH_PATH = "/home/haoxuan/Desktop/SpeculativeDecoding/models/qwen3-4b-math-lora"
+
 
 MATH_SYSTEM = "你是一个数学助手。请清晰写出推理与计算步骤，给出准确答案。"
-DEFAULT_SYSTEM = "你是一个乐于助人、逻辑清晰的AI助手。请用简明扼要的语言回答问题。"
+COMMON_SENSE_SYSTEM = "你是一个乐于助人、逻辑清晰的AI助手。请用简明扼要的语言回答问题。"
 
 
-def get_questions() -> List[str]:
+def get_common_sense_questions() -> List[str]:
+  """与 test_lora_inference.py 中一致的常识题。"""
   return [
     "用一句话解释什么是量子纠缠？",
     "为什么天空是蓝色的？",
@@ -59,18 +62,16 @@ def load_lora_model_and_tokenizer():
     trust_remote_code=True,
   )
   
-  print(f"Loading LoRA weights from: {LORA_CHECKPOINT_PATH}")
-  model = PeftModel.from_pretrained(base_model, LORA_CHECKPOINT_PATH)
+  print(f"Loading LoRA weights from: {LORA_MATH_PATH}")
+  model = PeftModel.from_pretrained(base_model, LORA_MATH_PATH)
   model = model.merge_and_unload()
-  print("LoRA weights merged successfully!")
+  print("LoRA (math) weights merged successfully!")
   
   return model, tokenizer
 
 
 @torch.inference_mode()
-def generate_answer(model, tokenizer, question: str, system_prompt: str = None) -> str:
-  if system_prompt is None:
-    system_prompt = DEFAULT_SYSTEM
+def generate_answer(model, tokenizer, question: str, system_prompt: str = MATH_SYSTEM) -> str:
   messages = [
       {"role": "system", "content": system_prompt},
       {"role": "user", "content": question}
@@ -109,20 +110,21 @@ def main() -> None:
   output_dir = root / "output"
   output_dir.mkdir(parents=True, exist_ok=True)
 
-  questions = get_questions()
+  common_sense_questions = get_common_sense_questions()
+
   model, tokenizer = load_lora_model_and_tokenizer()
-  out_path = output_dir / "qwen3_4b_lora_recovered_answers.txt"
+  out_path = output_dir / "qwen3_4b_math_lora_answers.txt"
 
   with out_path.open("w", encoding="utf-8") as fout:
-    # 1. 数学题（10 道，带准确率评估，与 math_eval_data 一致）
+    # 1. 数学题（仅 10 道，带准确率评估）
     fout.write("========== 数学题（10 道，计准确率）==========\n\n")
-    eval_results = []
+    eval_results: List[bool] = []
     for idx, (q, expected_list) in enumerate(MATH_EVAL_ITEMS, 1):
       print(f"\n=== [数学] Q{idx}: {q}")
       ans = generate_answer(model, tokenizer, q, system_prompt=MATH_SYSTEM)
       ok = check_math_answer(ans, expected_list)
       eval_results.append(ok)
-      print("[LoRA]", ans[:200].replace("\n", " "))
+      print("[Math LoRA]", ans[:200].replace("\n", " "))
       fout.write(f"Q{idx}: {q}\nA: {ans}\n正确: {ok}\n\n")
     correct, total = sum(eval_results), len(eval_results)
     accuracy = correct / total if total else 0.0
@@ -130,15 +132,15 @@ def main() -> None:
     fout.write(eval_summary)
     print(eval_summary.strip())
 
-    # 2. 常识题
+    # 2. 常识题（与 test_lora_inference 一致）
     fout.write("========== 常识题 ==========\n\n")
-    for idx, q in enumerate(questions, 1):
-      print(f"\n=== Q{idx}: {q}")
-      ans = generate_answer(model, tokenizer, q)
-      print("[LoRA]", ans[:200].replace("\n", " "))
-      fout.write(f"Q{idx}: {q}\nA(LoRA): {ans}\n\n")
+    for idx, q in enumerate(common_sense_questions, 1):
+      print(f"\n=== [常识] Q{idx}: {q}")
+      ans = generate_answer(model, tokenizer, q, system_prompt=COMMON_SENSE_SYSTEM)
+      print("[Math LoRA]", ans[:200].replace("\n", " "))
+      fout.write(f"Q{idx}: {q}\nA: {ans}\n\n")
 
-  print(f"\nDone. LoRA-recovered answers saved to: {out_path}")
+  print(f"\nDone. Math LoRA answers (数学+常识) saved to: {out_path}")
 
 
 if __name__ == "__main__":
