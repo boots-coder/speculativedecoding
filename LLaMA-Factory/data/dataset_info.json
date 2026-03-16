@@ -738,5 +738,13 @@
       "prompt": "content"
     },
     "folder": "python"
+  },
+  "mixed_qa": {
+    "file_name": "mixed_qa.jsonl",
+    "columns": {
+      "prompt": "instruction",
+      "query": "input",
+      "response": "output"
+    }
   }
 }

@@ -1,0 +1,102 @@
+========== 数学题（10 道，计准确率）==========
+
+Q1: 计算：17 * 24 + 33 等于多少？请给出步骤。
+A: 17 * 24 + 33 = 408 + 33 = 441。
+正确: True
+
+Q2: 解方程：2x + 5 = 17，求 x。
+A: 方程 2x + 5 = 17 可以改写为 2x = 17 - 5，即 2x = 12。因此，x = 12 / 2 = 6。
+正确: True
+
+Q3: 一个等差数列首项为 3，公差为 4，求第 10 项。
+A: 等差数列的第 n 项为 a_n = a_1 + (n-1)d，其中 a_1 是首项，d 是公差。因此，第 10 项为 a_10 = 3 + (10-1)(4) = 3 + 36 = 39。
+正确: True
+
+Q4: 化简：(x^2 - 4) / (x - 2)，其中 x ≠ 2。
+A: 化简后的表达式为 x + 2，其中 x ≠ 2。
+正确: True
+
+Q5: 求函数 f(x) = x^2 - 6x + 9 的最小值及取得最小值时 x 的值。
+A: 函数 f(x) = x^2 - 6x + 9 的最小值可以通过使用二次函数的顶点公式来找到，即 f(x) = -1/2 (x - 3)^2。因此，最小值发生在 x = 3，此时 f(3) = 9 - 18 + 9 = 0。
+正确: True
+
+Q6: 若 log2(a) = 3，log2(b) = 2，求 log2(a*b) 的值。
+A: 已知 log2(a) = 3 和 log2(b) = 2，我们可以使用对数的乘法法则，即 log2(a*b) = log2(a) + log2(b)。因此，log2(a*b) 的值为 3 + 2 = 5。
+正确: True
+
+Q7: 一个圆的半径为 5，求其面积和周长（保留 π）。
+A: 圆的面积为 78.54 平方单位，周长为 31.26 平方单位。
+正确: False
+
+Q8: 解不等式：3x - 7 > 2x + 4。
+A: 解不等式 3x - 7 > 2x + 4 的步骤如下：
+
+1. 从两边减去 2x：
+   3x - 2x > 7 - 4
+   x > 3
+
+2. 两边同时除以 x（注意 x ≠ 0）：
+   1 > 3/x
+
+3. 两边同时乘以 x（注意 x < 0，因为 x > 3 时x不为0）：
+   3 < x
+
+4. 结果为：x > 3
+
+因此，解为 x > 3。
+正确: False
+
+Q9: 从 1 到 100 所有整数的和是多少？请写出计算过程。
+A: 1 到 100 的所有整数的和为 5050。这可以通过使用算术数列的求和公式来计算，其中 n = 100，a1 = 1，a2n = 101。公式为 Sn = n/2(a1 + an)，因此 Sn = 100/2(1 + 101) = 5050。
+正确: True
+
+Q10: 设集合 A = {1, 2, 3}，B = {2, 3, 4}，求 A ∪ B 和 A ∩ B。
+A: A ∪ B = {1, 2, 3, 4}
+
+A ∩ B = {2, 3}
+正确: True
+
+>>> 数学题准确率: 8/10 = 80.0%
+
+========== 常识题 ==========
+
+Q1: 用一句话解释什么是量子纠缠？
+A: 量子纠缠是一种现象，即两个粒子保持连接，即使相隔很远，一个粒子的状态会影响另一个粒子的状态。
+
+Q2: 为什么天空是蓝色的？
+A: 天空之所以呈现蓝色，是因为太阳的白光被大气层中的粒子散射，导致蓝色光比其他颜色更容易散射。
+
+Q3: 写一段 50 字左右的自我介绍。
+A: 我是一名热爱学习、乐于助人、有创造力的AI助手。我在这里帮助您解答问题、提供信息和建议。我不断学习新的技能和知识，以确保我始终与最新的趋势保持同步。我在这里为您服务，期待您的来信。
+
+Q4: 给出三个提高深度学习训练稳定性的建议。
+A: 1. 使用适当的初始化技术。
+2. 使用适当的正则化技术。
+3. 使用适当的优化器。
+
+Q5: 设计一个每天早晨的高效学习计划, 该计划一共花费 10 分钟。
+A: 每天早晨的高效学习计划包括花5分钟进行伸展运动，然后进行5分钟的阅读，最后进行5分钟的写作。
+
+Q6: Explain the difference between supervised and unsupervised learning in one paragraph.
+A: Supervised learning is a type of machine learning where the input data is labeled, and the model is trained using labeled data. Unsupervised learning, on the other hand, does not require labeled data and instead focuses on discovering patterns and relationships in the data. Supervised learning is used for classification and regression tasks, while unsupervised learning is used for clustering and anomaly detection.
+
+Q7: Give me a simple Python function that computes Fibonacci numbers iteratively.
+A: def fibonacci(n): 
+    if n < 0: 
+        print("Invalid input") 
+    elif n == 1: 
+        return 0
+    elif n == 2: 
+        return 1
+    else: 
+        return fibonacci(n-1) + fibonacci(n-2)
+
+Q8: 假设你是一个产品经理，如何描述一款面向大学生的学习助手应用？
+A: 我作为产品经理设计面向大学生的学习助手应用，旨在帮助学生高效地学习。该应用将提供定制学习计划、学习提醒、学习工具和资源、互动测验和练习题，以及与同龄人建立联系的功能。
+
+Q9: 请用通俗的语言解释大 O 时间复杂度。
+A: 大 O 时间复杂度是一种衡量算法速度的方法，它衡量算法在处理特定输入时所需的时间量。大 O 表示算法在最坏情况下的时间复杂度，即当输入数据最坏情况时，算法所需的时间。大 O 衡量的复杂度是算法在处理给定数据集时所需时间的度量。
+
+Q10: 你认为未来五年大语言模型最重要的应用场景是什么？
+A: 未来五年，大语言模型最重要的应用场景可能是自然语言处理和自动客户服务。
+

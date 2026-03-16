@@ -92,10 +92,10 @@ def generate_answer(model, tokenizer, question: str, system_prompt: str = MATH_S
   output_ids = model.generate(
     **inputs,
     max_new_tokens=256,       
-    do_sample=True,           
-    temperature=0.7,          # 官方 Instruct 推荐值
-    top_p=0.8,                # 官方 Instruct 推荐值
-    top_k=20,                 # 官方 Instruct 推荐值
+    do_sample=False,           
+    temperature=0.1,          # 官方 Instruct 推荐值
+    top_p=1,                # 官方 Instruct 推荐值
+    top_k=1,                 # 官方 Instruct 推荐值
   )
   
   input_len = inputs["input_ids"].shape[1]

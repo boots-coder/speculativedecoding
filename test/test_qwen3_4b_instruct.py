@@ -78,10 +78,10 @@ def generate_answer(model, tokenizer, question: str, system_prompt: str = None) 
     generated_ids = model.generate(
         **model_inputs,
         max_new_tokens=256,     # 官方建议 Instruct 模型日常 16K，这里设 256 足够 10 个问题
-        do_sample=True,          
-        temperature=0.7,         # 官方推荐
-        top_p=0.8,               # 官方推荐
-        top_k=20,                # 官方推荐
+        do_sample=False,          
+        temperature=0.1,         # 官方推荐
+        top_p=1,               # 官方推荐
+        top_k=1,                # 官方推荐
     )
     
     # 4. 截断输入，只保留新生成的内容

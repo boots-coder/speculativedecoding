@@ -1,0 +1,19 @@
+### 模型
+model_name_or_path: /home/haoxuan/Desktop/SpeculativeDecoding/models/qwen3-4b-passthrough
+adapter_name_or_path: /home/haoxuan/Desktop/SpeculativeDecoding/models/qwen3-4b-lora-mixed
+
+### 方法
+finetuning_type: lora
+
+### 数据集（通用能力评测）
+# 使用 LLaMA-Factory 内置的 MMLU 评测任务
+task: mmlu_test    # 其他可选：ceval_validation, cmmlu_test
+template: fewshot
+lang: en
+n_shot: 5
+
+### 输出
+save_dir: /home/haoxuan/Desktop/SpeculativeDecoding/models/qwen3-4b-lora-mixed-mmlu-eval
+
+### Eval 参数
+batch_size: 4

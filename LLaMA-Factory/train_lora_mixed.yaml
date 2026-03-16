@@ -1,0 +1,44 @@
+### 模型与数据
+stage: sft
+do_train: true
+model_name_or_path: /home/haoxuan/Desktop/SpeculativeDecoding/models/qwen3-4b-passthrough
+
+# 使用 mixed_qa 数据集；已在 LLaMA-Factory 的 data/dataset_info.json 中注册该数据集
+dataset: mixed_qa
+dataset_dir: ./data
+template: qwen
+
+### LoRA 配置
+finetuning_type: lora
+lora_target: all
+lora_rank: 128
+
+### 输出路径
+output_dir: /home/haoxuan/Desktop/SpeculativeDecoding/models/qwen3-4b-lora-mixed
+overwrite_cache: true
+overwrite_output_dir: true
+
+### 训练超参数
+cutoff_len: 2048
+preprocessing_num_workers: 16
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 16
+learning_rate: 1.0e-4
+lr_scheduler_type: cosine
+warmup_steps: 100
+num_train_epochs: 3.0
+bf16: true
+
+### 评估与保存（训练过程中的验证）
+val_size: 0.05
+eval_strategy: steps
+eval_steps: 500
+save_steps: 500
+logging_steps: 10
+per_device_eval_batch_size: 1
+
+### 断点续训（本次从头训练，不加载 checkpoint）
+# resume_from_checkpoint: null
+
+report_to: wandb
+run_name: qwen3-4b-lora-mixed
