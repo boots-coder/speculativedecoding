@@ -1,0 +1,11 @@
+# 忽略 Cursor / 本地工具相关
+.cursor/
+*.log
+
+# 其他你想忽略的内容可以往下加
+# 大数据与模型文件，不进仓库
+data-mix-cpt-full/
+model/qwen3-4b-pruned-data-driven/
+# 本地大数据与模型目录，不进仓库
+data-mix-cpt-full/
+model/qwen3-4b-pruned-data-driven/
